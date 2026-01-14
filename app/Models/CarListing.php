@@ -2,13 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CarListing extends Model
 {
     protected $fillable = [
-        'user_id','car_model_id','title','slug','year','mileage',
-        'fuel_type','transmission','price','location','description','status'
+        'make',
+        'model',
+        'title',
+        'slug',
+        'year',
+        'mileage',
+        'fuel_type',
+        'transmission',
+        'price',
+        'location',
+        'description',
+        'status',
+        'user_id',
     ];
 
     public function user()
@@ -23,10 +36,17 @@ class CarListing extends Model
 
     protected static function booted()
     {
-        static::saving(function ($listing) {
-            if (empty($listing->slug) || $listing->isDirty('title')) {
-                $listing->slug = Str::slug($listing->title);
-            }
-        });
+       static::saving(function ($listing) {
+
+        // Only generate slug if it's empty
+        if (empty($listing->slug)) {
+            $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
+        }
+
+        // If title changed later, regenerate slug (still unique)
+        if ($listing->exists && $listing->isDirty('title')) {
+            $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
+        }
+    });
     }
 }

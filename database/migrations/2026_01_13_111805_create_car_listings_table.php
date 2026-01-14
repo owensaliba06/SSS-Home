@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('location');
 
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'sold'])->default('active');
+            $table->enum('status', ['available', 'sold',])->default('available');
 
             $table->timestamps();
         });
