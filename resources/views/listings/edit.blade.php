@@ -29,6 +29,17 @@
                     @csrf
                     @method('PUT')
 
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\ValidMakeModelFromApi;
 use App\Models\CarListing;
 use Illuminate\Http\Request;
 
@@ -100,7 +101,7 @@ class CarListingController extends Controller
     {
         $validated = $request->validate([
             'make'         => ['required', 'string', 'max:255'],
-            'model'        => ['required', 'string', 'max:255'],
+            'model'        => ['required', 'string', 'max:255', new ValidMakeModelFromApi()],
             'title'        => ['required', 'string', 'max:255'],
             'year'         => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'mileage'      => ['nullable', 'integer', 'min:0'],
@@ -140,7 +141,7 @@ class CarListingController extends Controller
 
         $validated = $request->validate([
             'make'         => ['required', 'string', 'max:255'],
-            'model'        => ['required', 'string', 'max:255'],
+            'model'        => ['required', 'string', 'max:255', new ValidMakeModelFromApi()],
             'title'        => ['required', 'string', 'max:255'],
             'year'         => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'mileage'      => ['nullable', 'integer', 'min:0'],
