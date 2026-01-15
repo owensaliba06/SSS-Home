@@ -8,56 +8,81 @@ use Illuminate\Http\Request;
 class CarListingController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = CarListing::query()->with(['carModel.make']);
+{
+    $query = CarListing::query()->with(['carModel.make']);
 
-        $query->where('status', 'available');
+    // Only available by default (change/remove if you want all)
+    $query->where('status', 'available');
 
-        // Filtering
-        if ($request->filled('make')) {
-            $query->where('make', 'like', '%' . trim($request->input('make')) . '%');
-        }
-
-        if ($request->filled('model')) {
-            $query->where('model', 'like', '%' . trim($request->input('model')) . '%');
-        }
-
-        if ($request->filled('fuel_type')) {
-            $query->where('fuel_type', $request->input('fuel_type'));
-        }
-
-        if ($request->filled('transmission')) {
-            $query->where('transmission', $request->input('transmission'));
-        }
-
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%' . trim($request->input('location')) . '%');
-        }
-
-        // Sorting
-        $sort = $request->input('sort', 'newest');
-        switch ($sort) {
-            case 'price_asc':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_desc':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'year_asc':
-                $query->orderBy('year', 'asc');
-                break;
-            case 'year_desc':
-                $query->orderBy('year', 'desc');
-                break;
-            default:
-                $query->latest();
-                break;
-        }
-
-        $listings = $query->paginate(9)->appends($request->query());
-
-        return view('listings.index', compact('listings'));
+    // --- Filters ---
+    if ($request->filled('make')) {
+        $query->where('make', 'like', '%' . trim($request->input('make')) . '%');
     }
+
+    if ($request->filled('model')) {
+        $query->where('model', 'like', '%' . trim($request->input('model')) . '%');
+    }
+
+    if ($request->filled('location')) {
+        $query->where('location', 'like', '%' . trim($request->input('location')) . '%');
+    }
+
+    if ($request->filled('fuel_type')) {
+        $query->where('fuel_type', $request->input('fuel_type'));
+    }
+
+    if ($request->filled('transmission')) {
+        $query->where('transmission', $request->input('transmission'));
+    }
+
+    if ($request->filled('min_year')) {
+        $query->where('year', '>=', (int) $request->input('min_year'));
+    }
+
+    if ($request->filled('max_year')) {
+        $query->where('year', '<=', (int) $request->input('max_year'));
+    }
+
+    if ($request->filled('min_price')) {
+        $query->where('price', '>=', (int) $request->input('min_price'));
+    }
+
+    if ($request->filled('max_price')) {
+        $query->where('price', '<=', (int) $request->input('max_price'));
+    }
+
+    // --- Sorting ---
+    $sort = $request->input('sort', 'newest');
+
+    switch ($sort) {
+        case 'price_asc':
+            $query->orderBy('price', 'asc');
+            break;
+        case 'price_desc':
+            $query->orderBy('price', 'desc');
+            break;
+        case 'year_asc':
+            $query->orderBy('year', 'asc');
+            break;
+        case 'year_desc':
+            $query->orderBy('year', 'desc');
+            break;
+        case 'mileage_asc':
+            $query->orderBy('mileage', 'asc');
+            break;
+        case 'mileage_desc':
+            $query->orderBy('mileage', 'desc');
+            break;
+        default:
+            $query->latest();
+            break;
+    }
+
+    $listings = $query->paginate(9)->appends($request->query());
+
+    return view('listings.index', compact('listings'));
+}
+
 
     public function show(CarListing $listing)
     {
