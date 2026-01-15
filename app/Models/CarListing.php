@@ -8,7 +8,11 @@ use Illuminate\Support\Str;
 
 class CarListing extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
+        'car_model_id',
         'make',
         'model',
         'title',
@@ -21,7 +25,6 @@ class CarListing extends Model
         'location',
         'description',
         'status',
-        'user_id',
     ];
 
     public function user()
@@ -36,17 +39,16 @@ class CarListing extends Model
 
     protected static function booted()
     {
-       static::saving(function ($listing) {
+        static::saving(function ($listing) {
 
-        // Only generate slug if it's empty
-        if (empty($listing->slug)) {
-            $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
-        }
+            if (empty($listing->slug) || ($listing->exists && $listing->isDirty('title'))) {
+                $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
+            }
+        });
+    }
 
-        // If title changed later, regenerate slug (still unique)
-        if ($listing->exists && $listing->isDirty('title')) {
-            $listing->slug = Str::slug($listing->title) . '-' . Str::random(6);
-        }
-    });
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

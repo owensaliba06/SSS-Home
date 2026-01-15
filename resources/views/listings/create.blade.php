@@ -108,7 +108,6 @@
                                 @php $tr = old('transmission', 'manual'); @endphp
                                 <option value="manual"          {{ $tr === 'manual' ? 'selected' : '' }}>Manual</option>
                                 <option value="automatic"       {{ $tr === 'automatic' ? 'selected' : '' }}>Automatic</option>
-                                <option value="semi-automatic"  {{ $tr === 'semi-automatic' ? 'selected' : '' }}>Semi-automatic</option>
                                 <option value="other"           {{ $tr === 'other' ? 'selected' : '' }}>Other</option>
                             </select>
                             @error('transmission')
